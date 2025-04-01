@@ -1,33 +1,65 @@
-<<<<<<< HEAD
-import logo from './logo.svg';
-import './App.css';
+<import React, { useEffect, useState } from 'react';
+ import { useAuth0 } from '@auth0/auth0-react';
+ import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-=======
-import React from 'react';
-import Home from './pages/Home';
+ function App() {
+   const {
+     loginWithRedirect,
+     logout,
+     isAuthenticated,
+     user,
+     getAccessTokenSilently,
+     isLoading,
+   } = useAuth0();
 
-function App() {
-  return <Home />;
->>>>>>> 70066a7 (Convert frontend from submodule to a regular folder)
-}
+   const [apiMessage, setApiMessage] = useState('');
 
-export default App;
+   useEffect(() => {
+     const fetchProtected = async () => {
+       try {
+         const token = await getAccessTokenSilently();
+         const res = await fetch(`${process.env.REACT_APP_API_URL}/api/protected`, {
+           headers: {
+             Authorization: `Bearer ${token}`,
+           },
+         });
+         const data = await res.json();
+         setApiMessage(data.message);
+       } catch (err) {
+         setApiMessage('Unable to access protected route');
+         console.error(err);
+       }
+     };
+
+     if (isAuthenticated) {
+       fetchProtected();
+     }
+   }, [isAuthenticated, getAccessTokenSilently]);
+
+   if (isLoading) return <div>Loading...</div>;
+
+   return (
+     <div className="App" style={{ padding: '2rem' }}>
+       {!isAuthenticated ? (
+         <>
+           <h1>Welcome to DadsLocker 👋</h1>
+           <button onClick={() => loginWithRedirect()}>Log In / Sign Up</button>
+         </>
+       ) : (
+         <>
+           <h1>Hello, {user.name}!</h1>
+           <button
+             onClick={() =>
+               logout({ logoutParams: { returnTo: window.location.origin } })
+             }
+           >
+             Log Out
+           </button>
+           <p style={{ marginTop: '2rem' }}>🔐 API says: {apiMessage}</p>
+         </>
+       )}
+     </div>
+   );
+ }
+
+ export default App;
