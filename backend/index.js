@@ -1,16 +1,9 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
+import React from 'react';
+import Home from './pages/Home';
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+function App() {
+  return <Home />;
+}
 
-app.get('/', (req, res) => {
-  res.send('DadsLocker backend is running.');
-});
+export default App;
 
-app.use('/api/notes', require('./routes/notes'));
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));

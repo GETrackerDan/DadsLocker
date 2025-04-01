@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import logo from './logo.svg';
 import './App.css';
 
@@ -20,6 +21,13 @@ function App() {
       </header>
     </div>
   );
+=======
+import React from 'react';
+import Home from './pages/Home';
+
+function App() {
+  return <Home />;
+>>>>>>> 70066a7 (Convert frontend from submodule to a regular folder)
 }
 
 export default App;
